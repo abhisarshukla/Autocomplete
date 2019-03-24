@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include <cctype>
 #include <vector>
 #include <string>
 
@@ -154,7 +155,7 @@ bool BinaryTree::autoComplete(string s, vector<string> &res)
 {
     Node *current = root;
     Node *tmp = searchWord(s, false);
-    if (!tmp->getLeft())
+    if (tmp == nullptr || tmp->getLeft() == nullptr)
         return false;
 
     current = tmp->getLeft();
@@ -208,10 +209,16 @@ bool loadDictionary(BinaryTree* bt, string filename)
         return false;
     }
     while (!words.eof()) {
-        char s[100];
+        string s;
         words >> s;
         bt->addWord(s);
     }
+    return true;
+}
+bool isValid(string s)
+{
+    if(!isalpha(s[0]))
+        return false;
     return true;
 }
 int main()
@@ -235,10 +242,15 @@ int main()
             string s;
             char addNew;
             cin >> s;
+            if(!isValid(s))
+            {
+                cout<<"Enter valid word."<<endl;
+                break;
+            }
             transform(s.begin(), s.end(), s.begin(), ::tolower);
             vector<string> autoCompleteList;
             bt->autoComplete(s, autoCompleteList);
-            if (autoCompleteList.size() == 0) {
+            if (autoCompleteList.size() == false) {
                 cout << "No suggestions" << endl;
                 cout<<"Want to add this to the dictionary?(y/n): ";
                 cin>>addNew;
@@ -249,7 +261,6 @@ int main()
                 }
                 else
                     cout<<"Word "<<s<<" was not added to the dictionary"<<endl;
-                
             }
             else {
                 cout << "Autocomplete reply :" << endl;
